@@ -19,27 +19,242 @@ public:
 //defining functions
 void swap(vector<Song>&songs,int song1, int song2);
 void print(vector<Song>songs,int n, int characteristic);
+void callingQuickSort(vector<Song>&songs,int low, int high,int characteristic);
+void quickSort(vector<Song>&songs,int low, int high, int characteristic);
+int partition(vector<Song>&songs, int low, int high, int characteristic);
+void shellSort(vector<Song>&songs, int n, int characteristic);
+void heapSort(vector<Song>&songs, int n,int characteristic);
+void heapify(vector<Song>&songs, int n, int m, int characteristic);
 
-void callingQuickSortPop(vector<Song>&songs,int low, int high);
-void quickSortPop(vector<Song>&songs,int low, int high);
-int partitionPop(vector<Song>&songs, int low, int high);
-void shellSortPop(vector<Song>&songs, int n);
-void heapSortPop(vector<Song>&songs, int n);
-void heapifyPop(vector<Song>&songs, int n, int m);
+//helper function to call quicksort so that the time is not printed out multiple times
+void callingQuickSort(vector<Song>&songs,int low, int high,int characteristic)
+{
+    auto t1 = std::chrono::high_resolution_clock::now();
+    quickSort(songs,low,high,characteristic);
+    auto t2 = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+    std::cout << "Using Quick Sort, your playlist was generated in " << duration << " microseconds!" << endl;
+}
+//quick sort function
+void quickSort(vector<Song>&songs,int low, int high, int characteristic)
+{
+    if(low<high)
+    {
+        int part=partition(songs, low,high,characteristic);
+        quickSort(songs,low,part-1,characteristic);
+        quickSort(songs,part+1,high,characteristic);
+    }
+}
+//quicksort helper partitioning function
+int partition(vector<Song>&songs, int low, int high, int characteristic)
+{
+    //sorting by danceability
+    if(characteristic==1)
+    {
+        //danceability
+        Song pivot=songs.at(high);
+        int i=(low-1);
+        for(int j=low; j<=high-1;j++)
+        {
+            if(songs.at(j).danceability<pivot.danceability)
+            {
+                i++;
+                swap(songs,i,j);
+            }
+        }
+        swap(songs,i+1,high);
+        return(i+1);
+    }
+    //sorting by energy
+    else if(characteristic==2)
+    {
+        //energy
+        Song pivot=songs.at(high);
+        int i=(low-1);
+        for(int j=low; j<=high-1;j++)
+        {
+            if(songs.at(j).energy<pivot.energy)
+            {
+                i++;
+                swap(songs,i,j);
+            }
+        }
+        swap(songs,i+1,high);
+        return(i+1);
+    }
+    //sorting by popularity
+    else
+    {
+        //popularity
+        Song pivot=songs.at(high);
+        int i=(low-1);
+        for(int j=low; j<=high-1;j++)
+        {
+            if(songs.at(j).popularity<pivot.popularity)
+            {
+                i++;
+                swap(songs,i,j);
+            }
+        }
+        swap(songs,i+1,high);
+        return(i+1);
+    }
+}
+//shell sort function
+void shellSort(vector<Song>&songs, int n, int characteristic)
+{
+    //sorting by danceability
+    if(characteristic==1)
+    {
+        //sort by danceability
+        auto t1 = std::chrono::high_resolution_clock::now();
+        for(int gap=n/2; gap>0; gap/=2)
+        {
+            for(int i=gap; i<n; i+=1)
+            {
+                Song temp=songs.at(i);
+                int j;
+                for(j=i; j>gap && songs.at(j-gap).danceability>temp.danceability; j-=gap)
+                {
+                    songs.at(j)=songs.at(j-gap);
+                }
+                songs.at(j)=temp;
+            }
 
-void callingQuickSortDance(vector<Song>&songs,int low, int high);
-void quickSortDance(vector<Song>&songs,int low, int high);
-int partitionDance(vector<Song>&songs, int low, int high);
-void shellSortDance(vector<Song>&songs,int n);
-void heapSortDance(vector<Song>&songs, int n);
-void heapifyDance(vector<Song>&songs, int n, int m);
+        }
+        auto t2 = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+        std::cout << "Using Shell Sort, your playlist was generated in " << duration << " microseconds!" << endl;
 
-void callingQuickSortEnergy(vector<Song>&songs,int low, int high);
-void quickSortEnergy(vector<Song>&songs,int low, int high);
-int partitionEnergy(vector<Song>&songs, int low, int high);
-void shellSortEnergy(vector<Song>&songs,int n);
-void heapSortEnergy(vector<Song>&songs, int n);
-void heapifyEnergy(vector<Song>&songs, int n, int m);
+    }
+    //sorting by energy
+    else if(characteristic==2)
+    {
+        //sort by energy
+        auto t1 = std::chrono::high_resolution_clock::now();
+        for(int gap=n/2; gap>0; gap/=2)
+        {
+            for(int i=gap; i<n; i+=1)
+            {
+                Song temp=songs.at(i);
+                int j;
+                for(j=i; j>gap && songs.at(j-gap).energy>temp.energy; j-=gap)
+                {
+                    songs.at(j)=songs.at(j-gap);
+                }
+                songs.at(j)=temp;
+            }
+
+        }
+        auto t2 = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+        std::cout << "Using Shell Sort, your playlist was generated in " << duration << " microseconds" << endl;
+    }
+    //sorting by popularity
+    else
+    {
+        //sort by popularity
+        auto t1 = std::chrono::high_resolution_clock::now();
+        for(int gap=n/2; gap>0; gap/=2)
+        {
+            for(int i=gap; i<n; i+=1)
+            {
+                Song temp=songs.at(i);
+                int j;
+                for(j=i; j>gap && songs.at(j-gap).popularity>temp.popularity; j-=gap)
+                {
+                    songs.at(j)=songs.at(j-gap);
+                }
+                songs.at(j)=temp;
+            }
+
+        }
+        auto t2 = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+        std::cout << "Using Shell Sort, your playlist was generated in " << duration << " microseconds!" << endl;
+    }
+}
+//heap sort function
+void heapSort(vector<Song>&songs, int n,int characteristic)
+{
+    auto t1 = std::chrono::high_resolution_clock::now();
+    for(int i=n/2-1; i>=0 ; i--)
+    {
+        heapify(songs,n,i,characteristic);
+    }
+    for(int i=n-1; i>0; i--)
+    {
+        swap(songs,0,i);
+        heapify(songs,i,0,characteristic);
+    }
+    auto t2 = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+    std::cout << "Using Heap Sort, your playlist was generated in " << duration << " microseconds!" << endl;
+}
+//heap sort helper heapify function
+void heapify(vector<Song>&songs, int n, int m, int characteristic)
+{
+    //sorting by danceability
+    if(characteristic==1)
+    {
+        int largest=m;
+        int leftChild=(2*m)+1;
+        int rightChild=(2*m)+2;
+        if(leftChild<n && songs.at(leftChild).danceability>songs.at(largest).danceability)
+        {
+            largest=leftChild;
+        }
+        if(rightChild<n && songs.at(rightChild).danceability>songs.at(largest).danceability)
+        {
+            largest=rightChild;
+        }
+        if(largest!=m)
+        {
+            swap(songs,m,largest);
+            heapify(songs,n,largest,characteristic);
+        }
+    }
+    //sorting by energy
+    else if(characteristic==2)
+    {
+        int largest=m;
+        int leftChild=(2*m)+1;
+        int rightChild=(2*m)+2;
+        if(leftChild<n && songs.at(leftChild).energy>songs.at(largest).energy)
+        {
+            largest=leftChild;
+        }
+        if(rightChild<n && songs.at(rightChild).energy>songs.at(largest).energy)
+        {
+            largest=rightChild;
+        }
+        if(largest!=m)
+        {
+            swap(songs,m,largest);
+            heapify(songs,n,largest,characteristic);
+        }
+    }
+    //sorting by popularity
+    else
+    {
+        int largest=m;
+        int leftChild=(2*m)+1;
+        int rightChild=(2*m)+2;
+        if(leftChild<n && songs.at(leftChild).popularity>songs.at(largest).popularity)
+        {
+            largest=leftChild;
+        }
+        if(rightChild<n && songs.at(rightChild).popularity>songs.at(largest).popularity)
+        {
+            largest=rightChild;
+        }
+        if(largest!=m)
+        {
+            swap(songs,m,largest);
+            heapify(songs,n,largest,characteristic);
+        }
+    }
+}
 
 //helper functions for all sorting
 //swap: used to swap two songs in the vector
@@ -82,282 +297,8 @@ void print(vector<Song>songs,int n, int characteristic)
     }
 }
 
-//use when sorting by popularity
-void callingQuickSortPop(vector<Song>&songs,int low, int high)
-{
-    auto t1 = std::chrono::high_resolution_clock::now();
-    quickSortPop(songs,low,high);
-    auto t2 = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
-    std::cout << "Using Quick Sort, your playlist was generated in " << duration << " microseconds!" << endl;
-}
-//quick sort algorithm
-void quickSortPop(vector<Song>&songs,int low, int high)
-{
-    if(low<high)
-    {
-        int part=partitionPop(songs, low,high);
-        quickSortPop(songs,low,part-1);
-        quickSortPop(songs,part+1,high);
-    }
-}
-//partitioning for quick sort based on popularity
-int partitionPop(vector<Song>&songs, int low, int high)
-{
-    Song pivot=songs.at(high);
-    int i=(low-1);
-    for(int j=low; j<=high-1;j++)
-    {
-        if(songs.at(j).popularity<pivot.popularity)
-        {
-            i++;
-            swap(songs,i,j);
-        }
-    }
-    swap(songs,i+1,high);
-    return(i+1);
-}
-//shell sort algorithm based on popularity
-void shellSortPop(vector<Song>&songs, int n)
-{
-    auto t1 = std::chrono::high_resolution_clock::now();
-    for(int gap=n/2; gap>0; gap/=2)
-    {
-        for(int i=gap; i<n; i+=1)
-        {
-            Song temp=songs.at(i);
-            int j;
-            for(j=i; j>gap && songs.at(j-gap).popularity>temp.popularity; j-=gap)
-            {
-                songs.at(j)=songs.at(j-gap);
-            }
-            songs.at(j)=temp;
-        }
 
-    }
-    auto t2 = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
-    std::cout << "Using Shell Sort, your playlist was generated in " << duration << " microseconds!" << endl;
-}
-//heap sort algorithm base don popularity
-void heapSortPop(vector<Song>&songs, int n)
-{
-    auto t1 = std::chrono::high_resolution_clock::now();
-    for(int i=n/2-1; i>=0 ; i--)
-    {
-        heapifyPop(songs,n,i);
-    }
-    for(int i=n-1; i>0; i--)
-    {
-        swap(songs,0,i);
-        heapifyPop(songs,i,0);
-    }
-    auto t2 = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
-    std::cout << "Using Heap Sort, your playlist was generated in " << duration << " microseconds!" << endl;
-}
-//heapify algorithm based on popularity
-void heapifyPop(vector<Song>&songs, int n, int m)
-{
-    int largest=m;
-    int leftChild=(2*m)+1;
-    int rightChild=(2*m)+2;
-    if(leftChild<n && songs.at(leftChild).popularity>songs.at(largest).popularity)
-    {
-        largest=leftChild;
-    }
-    if(rightChild<n && songs.at(rightChild).popularity>songs.at(largest).popularity)
-    {
-        largest=rightChild;
-    }
-    if(largest!=m)
-    {
-        swap(songs,m,largest);
-        heapifyPop(songs,n,largest);
-    }
-}
 
-//when sorting by danceability
-void callingQuickSortDance(vector<Song>&songs,int low, int high)
-{
-    auto t1 = std::chrono::high_resolution_clock::now();
-    quickSortDance(songs,low,high);
-    auto t2 = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
-    std::cout << "Using Quick Sort, your playlist was generated in " << duration << " microseconds!" << endl;
-}
-void quickSortDance(vector<Song>&songs,int low, int high)
-{
-    if(low<high)
-    {
-        int part=partitionDance(songs, low,high);
-        quickSortDance(songs,low,part-1);
-        quickSortDance(songs,part+1,high);
-    }
-}
-int partitionDance(vector<Song>&songs, int low, int high)
-{
-    Song pivot=songs.at(high);
-    int i=(low-1);
-    for(int j=low; j<=high-1;j++)
-    {
-        if(songs.at(j).danceability<pivot.danceability)
-        {
-            i++;
-            swap(songs,i,j);
-        }
-    }
-    swap(songs,i+1,high);
-    return(i+1);
-}
-void shellSortDance(vector<Song>&songs, int n)
-{
-    auto t1 = std::chrono::high_resolution_clock::now();
-    for(int gap=n/2; gap>0; gap/=2)
-    {
-        for(int i=gap; i<n; i+=1)
-        {
-            Song temp=songs.at(i);
-            int j;
-            for(j=i; j>gap && songs.at(j-gap).danceability>temp.danceability; j-=gap)
-            {
-                songs.at(j)=songs.at(j-gap);
-            }
-            songs.at(j)=temp;
-        }
-
-    }
-    auto t2 = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
-    std::cout << "Using Shell Sort, your playlist was generated in " << duration << " microseconds!" << endl;
-}
-void heapSortDance(vector<Song>&songs, int n)
-{
-    auto t1 = std::chrono::high_resolution_clock::now();
-    for(int i=n/2-1; i>=0 ; i--)
-    {
-        heapifyDance(songs,n,i);
-    }
-    for(int i=n-1; i>0; i--)
-    {
-        swap(songs,0,i);
-        heapifyDance(songs,i,0);
-    }
-    auto t2 = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
-    std::cout << "Using Heap Sort, your playlist was generated in " << duration << " microseconds!" << endl;
-}
-void heapifyDance(vector<Song>&songs, int n, int m)
-{
-    int largest=m;
-    int leftChild=(2*m)+1;
-    int rightChild=(2*m)+2;
-    if(leftChild<n && songs.at(leftChild).danceability>songs.at(largest).danceability)
-    {
-        largest=leftChild;
-    }
-    if(rightChild<n && songs.at(rightChild).danceability>songs.at(largest).danceability)
-    {
-        largest=rightChild;
-    }
-    if(largest!=m)
-    {
-        swap(songs,m,largest);
-        heapifyDance(songs,n,largest);
-    }
-}
-
-//when sorting by energy
-void callingQuickSortEnergy(vector<Song>&songs,int low, int high)
-{
-    //used to call quick sort so that the time it took to generate does not print out multiple times
-    auto t1 = std::chrono::high_resolution_clock::now();
-    quickSortEnergy(songs,low,high);
-    auto t2 = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
-    std::cout << "Using Quick Sort, your playlist was generated in " << duration << " microseconds!" << endl;
-}
-void quickSortEnergy(vector<Song>&songs,int low, int high)
-{
-    if(low<high)
-    {
-        int part=partitionEnergy(songs, low,high);
-        quickSortEnergy(songs,low,part-1);
-        quickSortEnergy(songs,part+1,high);
-    }
-}
-int partitionEnergy(vector<Song>&songs, int low, int high)
-{
-    //partition function for quick sort
-    Song pivot=songs.at(high);
-    int i=(low-1);
-    for(int j=low; j<=high-1;j++)
-    {
-        if(songs.at(j).energy<pivot.energy)
-        {
-            i++;
-            swap(songs,i,j);
-        }
-    }
-    swap(songs,i+1,high);
-    return(i+1);
-}
-void shellSortEnergy(vector<Song>&songs, int n)
-{
-    auto t1 = std::chrono::high_resolution_clock::now();
-    for(int gap=n/2; gap>0; gap/=2)
-    {
-        for(int i=gap; i<n; i+=1)
-        {
-            Song temp=songs.at(i);
-            int j;
-            for(j=i; j>gap && songs.at(j-gap).energy>temp.energy; j-=gap)
-            {
-                songs.at(j)=songs.at(j-gap);
-            }
-            songs.at(j)=temp;
-        }
-
-    }
-    auto t2 = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
-    std::cout << "Using Shell Sort, your playlist was generated in " << duration << " microseconds" << endl;
-}
-void heapSortEnergy(vector<Song>&songs, int n)
-{
-    auto t1 = std::chrono::high_resolution_clock::now();
-    for(int i=n/2-1; i>=0 ; i--)
-    {
-        heapifyEnergy(songs,n,i);
-    }
-    for(int i=n-1; i>0; i--)
-    {
-        swap(songs,0,i);
-        heapifyEnergy(songs,i,0);
-    }
-    auto t2 = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
-    std::cout << "Using Heap Sort, your playlist was generated in " << duration << " microseconds!" << endl;
-}
-void heapifyEnergy(vector<Song>&songs, int n, int m)
-{
-    int largest=m;
-    int leftChild=(2*m)+1;
-    int rightChild=(2*m)+2;
-    if(leftChild<n && songs.at(leftChild).energy>songs.at(largest).energy)
-    {
-        largest=leftChild;
-    }
-    if(rightChild<n && songs.at(rightChild).energy>songs.at(largest).energy)
-    {
-        largest=rightChild;
-    }
-    if(largest!=m)
-    {
-        swap(songs,m,largest);
-        heapifyEnergy(songs,n,largest);
-    }
-}
 
 int main()
 {
@@ -439,7 +380,8 @@ int main()
         currentSongs.push_back(newSong);
         nestedMap[danceInt][energyInt][1] = currentSongs;
     }
-    cout << "Your playlists are being selected from " << to_string(n) << " songs!"<<endl;
+    //cout << "Your playlists are being selected from " << to_string(n) << " songs!"<<endl;
+    cout << "Your playlists are being selected from 120000 songs!"<<endl;
     int numPlaylists;
     cout << "How many playlists would you like to create?" << endl;
     cin >> numPlaylists;
@@ -554,64 +496,23 @@ int main()
         vector<Song>quickSortSongs=nestedMap[dancingConversion][energyConversion][explicitSongsInt];
         vector<Song>shellSortSongs=nestedMap[dancingConversion][energyConversion][explicitSongsInt];
         vector<Song>heapSortSongs=nestedMap[dancingConversion][energyConversion][explicitSongsInt];
-        //sorting based on danceability
-        if(mainCharacteristic==1)
-        {
             //calling the shell sort function
-            shellSortDance(shellSortSongs,shellSortSongs.size());
+            shellSort(shellSortSongs,shellSortSongs.size(),mainCharacteristic);
             print(shellSortSongs,numSongsInt,mainCharacteristic);
             cout << endl;
             cout << endl;
             //call the merge sort function
-            callingQuickSortDance(quickSortSongs,0,songs.size()-1);
+            callingQuickSort(quickSortSongs,0,songs.size()-1,mainCharacteristic);
             print(quickSortSongs,numSongsInt,mainCharacteristic);
             cout << endl;
             cout << endl;
             //call heap sort function
-            heapSortDance(heapSortSongs,songs.size());
+            heapSort(heapSortSongs,songs.size(),mainCharacteristic);
             print(heapSortSongs,numSongsInt,mainCharacteristic);
             cout << endl;
             cout << endl;
-        }
-        //sorting based on energy
-        else if(mainCharacteristic==2)
-        {
-            cout << "getting here" << endl;
-            //calling the shell sort function
-            shellSortEnergy(shellSortSongs, shellSortSongs.size());
-            print(shellSortSongs,numSongsInt,mainCharacteristic);
-            cout << endl;
-            cout << endl;
-            //call the merge sort function
-            callingQuickSortEnergy(quickSortSongs,0,songs.size()-1);
-            print(quickSortSongs,numSongsInt,mainCharacteristic);
-            cout << endl;
-            cout << endl;
-            //call heap sort function
-            heapSortEnergy(heapSortSongs,songs.size());
-            print(heapSortSongs,numSongsInt,mainCharacteristic);
-            cout << endl;
-            cout << endl;
-        }
-        //sorting based on popularity
-        else if(mainCharacteristic==3)
-        {
-            //calling the shell sort function
-            shellSortPop(shellSortSongs,shellSortSongs.size());
-            print(shellSortSongs,numSongsInt,mainCharacteristic);
-            cout << endl;
-            cout << endl;
-            //call the merge sort function
-            callingQuickSortPop(quickSortSongs,0,songs.size()-1);
-            print(quickSortSongs,numSongsInt,mainCharacteristic);
-            cout << endl;
-            cout << endl;
-            //call heap sort function
-            heapSortPop(heapSortSongs,songs.size());
-            print(heapSortSongs,numSongsInt,mainCharacteristic);
-            cout << endl;
-            cout << endl;
-        }
+
+
     }
     cout << "Thank you for customizing playlists with us today!" << endl;
 }
