@@ -560,7 +560,7 @@ int main()
         currentSongs.push_back(newSong);
         nestedMap[danceInt][energyInt][1] = currentSongs;
     }
-    cout << "Your playlists are being selected from 120000 songs!" << endl;
+    cout << "Your playlists are being selected from" << to_string(n) << " songs!" << endl;
     int numPlaylists;
     cout << "How many playlists would you like to create?" << endl;
     cin >> numPlaylists;
